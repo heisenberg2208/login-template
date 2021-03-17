@@ -14,7 +14,8 @@ import useStyles from "../Config/myStyles";
 import { UserContext } from '../context/UserContext';
 import firebase from "firebase/app";
 import { toast } from 'react-toastify';
-import { Redirect } from 'react-router-dom';
+import { Redirect, useHistory } from 'react-router-dom';
+import { SET_USER } from '../context/action.types';
 
 
 
@@ -23,19 +24,51 @@ import { Redirect } from 'react-router-dom';
 const SignIn = () =>
 {
   //
+
+  console.log("Inside SignIn");
   const classes = useStyles();
 
-  const context = useContext(UserContext);
+  const {state, dispatch} = useContext(UserContext);
+
+  const {isLoading, user} = state;
+
+  const history = useHistory();
+
   const[email, setEmail] = useState('');
   const[password, setPassword] = useState('');
 
+  firebase
+    .auth()
+    .onAuthStateChanged(res=>{
+        if(res)
+        {
+            dispatch({
+                type: SET_USER,
+                payload: {email: res.email, uid: res.uid}
+            });
+            history.push('/');
+        }
+        else
+        {
+
+        }
+    });
+
   const handleSignIn = () => {
+
+    
+
+    
+    
       firebase
       .auth()
       .signInWithEmailAndPassword(email,password)
       .then(res=>{
           console.log(res);
-          context.setUser({email:res.user.email, uid:res.user.uid});
+          dispatch({
+            type: SET_USER,
+            payload: {email:res.user.email, uid:res.user.uid}
+          });
       })
       .catch(error=>{
           console.log(error);
@@ -45,9 +78,9 @@ const SignIn = () =>
 
   }
 
-  if(context.user?.uid)
+  if(user?.uid)
   {
-      return(<Redirect to="/"/>);
+      history.push("/");
   }
 
   const handleSubmit = (e) => {

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useReducer } from 'react';
 
 import {BrowserRouter as Router, Switch, Route} from "react-router-dom";
 import { ToastContainer } from 'react-toastify';
@@ -18,21 +18,30 @@ import "firebase/auth";
 
 import firebaseConfig from "./Config/firebaseConfig";
 import { useState } from 'react';
+import reducer from './context/reducer';
 
 
 firebase.initializeApp(firebaseConfig);
 
+const initialState = {
+  isLoading: true,
+  user: null
+}
+
 const App = () =>
 {
   //
+  const [state, dispatch] = useReducer(reducer, initialState);
+  
 
-  const[user,setUser]= useState(null);
+  
+  console.log("Inside App");
   return(
 
     <Router>
     <ToastContainer />
 
-    <UserContext.Provider value={{user,setUser}}>
+    <UserContext.Provider value={{state,dispatch}}>
     
     <Switch>
       <Route exact path="/" component={Home}/>

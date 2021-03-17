@@ -14,17 +14,37 @@ import { toast } from "react-toastify";
 
 import firebase from "firebase/app";
 import { UserContext } from '../context/UserContext';
-import { Redirect } from 'react-router-dom';
+import { Redirect, useHistory } from 'react-router-dom';
+import { SET_USER } from '../context/action.types';
 
 const SignUp = () =>
 {
   //
 
-  const context = useContext(UserContext);
+  const {state, dispatch} = useContext(UserContext);
+  const {isLoading, user} = state;
+  const history = useHistory();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const classes = useStyles();
+
+  firebase
+    .auth()
+    .onAuthStateChanged(res=>{
+        if(res)
+        {
+            dispatch({
+                type: SET_USER,
+                payload: {email: res.email, uid: res.uid}
+            });
+            history.push('/');
+        }
+        else
+        {
+
+        }
+    });
 
   const handleSignUp = () => {
       
@@ -35,7 +55,13 @@ const SignUp = () =>
         res=>{
             console.log(res);
             toast(res.user.email, {type:"success"});
-            context.setUser( {email: res.user.email, uid: res.user.uid} );
+
+            dispatch({
+              type: SET_USER,
+              payload: {email: res.user.email, uid: res.user.uid}
+            });
+
+            history.push('/');
             
             
         }
@@ -55,9 +81,9 @@ const SignUp = () =>
 
   }
 
-  if(context.user?.uid)
+  if(user?.uid)
   {
-      return(<Redirect to="/"/>);
+      history.push('/');
   }
 
   return (
