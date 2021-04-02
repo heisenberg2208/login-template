@@ -17,6 +17,8 @@ import { toast } from 'react-toastify';
 import { Redirect, useHistory } from 'react-router-dom';
 import { SET_LOADING, SET_USER } from '../context/action.types';
 
+
+//https://reactjsexample.com/build-a-smooth-and-lightweight-react-component-loading-with-css/
 import { CommonLoading } from 'react-loadingg';
 
 
