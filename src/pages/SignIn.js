@@ -15,7 +15,9 @@ import { UserContext } from '../context/UserContext';
 import firebase from "firebase/app";
 import { toast } from 'react-toastify';
 import { Redirect, useHistory } from 'react-router-dom';
-import { SET_USER } from '../context/action.types';
+import { SET_LOADING, SET_USER } from '../context/action.types';
+
+import { CommonLoading } from 'react-loadingg';
 
 
 
@@ -36,10 +38,15 @@ const SignIn = () =>
 
   const[email, setEmail] = useState('');
   const[password, setPassword] = useState('');
+  const[loading, setLoading] = useState(true);
+
 
   firebase
     .auth()
     .onAuthStateChanged(res=>{
+
+      setLoading(false);
+
         if(res)
         {
             dispatch({
@@ -69,6 +76,7 @@ const SignIn = () =>
             type: SET_USER,
             payload: {email:res.user.email, uid:res.user.uid}
           });
+          history.push("/");
       })
       .catch(error=>{
           console.log(error);
@@ -78,16 +86,20 @@ const SignIn = () =>
 
   }
 
-  if(user?.uid)
-  {
-      history.push("/");
-  }
 
   const handleSubmit = (e) => {
       //
       e.preventDefault();
       handleSignIn();
   }
+
+  if(loading)
+  {
+    return(<CommonLoading />);
+  }
+  else
+  {
+
 
   return (
     <Container component="main" maxWidth="xs">
@@ -150,6 +162,8 @@ const SignIn = () =>
       </Box>
     </Container>
   );
+
+  }
 }
 
 export default SignIn;

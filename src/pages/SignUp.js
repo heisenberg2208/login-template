@@ -81,10 +81,6 @@ const SignUp = () =>
 
   }
 
-  if(user?.uid)
-  {
-      history.push('/');
-  }
 
   return (
     <Container component="main" maxWidth="xs">
